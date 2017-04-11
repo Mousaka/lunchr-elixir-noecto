@@ -5,6 +5,10 @@ defmodule LunchrInterface.Mixfile do
     [app: :lunchr_interface,
      version: "0.0.1",
      elixir: "~> 1.2",
+     build_path: "../../_build",
+     config_path: "../../config/config.exs",
+     deps_path: "../../deps",
+     lockfile: "../../mix.lock",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
@@ -34,6 +38,6 @@ defmodule LunchrInterface.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
-     {:lunchr, path: "../lunchr"}]
+     {:lunchr, in_umbrella: true}]
   end
 end
