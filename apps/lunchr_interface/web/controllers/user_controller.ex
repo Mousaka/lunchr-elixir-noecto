@@ -3,7 +3,7 @@ defmodule LunchrInterface.UserController do
 
   def show(conn, %{}) do
     {:ok, bucket} = Lunchr.Registry.lookup(:lunchr_registry, "users")
-    item = Lunchr.Bucket.get(bucket, "Krlu")
+    item = Lunchr.Bucket.get(bucket, "goduser")
     json conn, item
   end
 

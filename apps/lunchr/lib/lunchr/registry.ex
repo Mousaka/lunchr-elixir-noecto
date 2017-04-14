@@ -1,6 +1,6 @@
 defmodule Lunchr.Registry do
   use GenServer
-
+  alias Lunchr.User
   # def start_link do
   def start_link(name) do
     # GenServer.start_link(__MODULE__, :ok, [])
@@ -20,8 +20,9 @@ defmodule Lunchr.Registry do
     {:ok, user_bucket} = Lunchr.Bucket.start_link
     map = Map.put(%{}, "users", user_bucket)
     {:ok, place_bucket} = Lunchr.Bucket.start_link
-    Lunchr.Bucket.put(user_bucket, "Krlu", 4)
     data = Map.put(map, "places", place_bucket)
+    goduser = %User{username: "goduser", name: "Kristian", token: 123}
+    Lunchr.Bucket.put(user_bucket, "goduser", goduser)
     {:ok, data}
   end
 

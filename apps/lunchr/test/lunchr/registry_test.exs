@@ -1,6 +1,6 @@
 defmodule Lunchr.RegistryTest do
   use ExUnit.Case, async: true
-
+  alias  Lunchr.User
   setup context do
     {:ok, registry} = Lunchr.Registry.start_link(context.test)
     {:ok, registry: registry}
@@ -28,5 +28,10 @@ defmodule Lunchr.RegistryTest do
 
   test "no bananas", %{registry: registry} do
     assert Lunchr.Registry.lookup(registry, "bananas") == :error
+  end
+
+  test "find goduser", %{registry: registry} do
+    assert {:ok, user_bucket} = Lunchr.Registry.lookup(registry, "users")
+    assert Lunchr.Bucket.get(user_bucket, "goduser") == %User{username: "goduser", name: "Kristian", token: 123}
   end
 end
