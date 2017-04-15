@@ -21,7 +21,7 @@ defmodule LunchrInterface.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {LunchrInterface, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext, :lunchr]]
+     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext, :uuid, :lunchr]]
   end
 
   # Specifies which paths to compile per environment.
@@ -38,6 +38,7 @@ defmodule LunchrInterface.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
+     {:uuid, "~> 1.1"},
      {:lunchr, in_umbrella: true}]
   end
 end

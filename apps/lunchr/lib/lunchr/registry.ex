@@ -4,8 +4,17 @@ defmodule Lunchr.Registry do
   # def start_link do
   def start_link(name) do
     # GenServer.start_link(__MODULE__, :ok, [])
-    IO.puts(name)
     GenServer.start_link(__MODULE__, :ok, name: name)
+  end
+
+  def reset(server) do
+    case GenServer.whereis(server) do
+      nil ->
+        start_link(server)
+      _ ->
+        GenServer.stop(server)
+        start_link(server)
+      end
   end
 
   def lookup(server, name) do
@@ -17,13 +26,21 @@ defmodule Lunchr.Registry do
   end
 
   def init(:ok) do
+    stateWithUserBucket = Map.put(%{}, "users", initUsers())
+    data = Map.put(stateWithUserBucket, "places", initPlaces())
+    {:ok, data}
+  end
+
+  defp initUsers() do
     {:ok, user_bucket} = Lunchr.Bucket.start_link
-    map = Map.put(%{}, "users", user_bucket)
-    {:ok, place_bucket} = Lunchr.Bucket.start_link
-    data = Map.put(map, "places", place_bucket)
     goduser = %User{username: "goduser", name: "Kristian", token: 123}
     Lunchr.Bucket.put(user_bucket, "goduser", goduser)
-    {:ok, data}
+    user_bucket
+  end
+
+  defp initPlaces() do
+    {:ok, places_bucket} = Lunchr.Bucket.start_link
+    places_bucket
   end
 
   def handle_call({:lookup, name}, _from, names) do

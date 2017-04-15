@@ -21,6 +21,7 @@ defmodule LunchrInterface.Router do
 
   scope "/api", LunchrInterface do
     pipe_through :api
-    get "/users", UserController, :show
+    resources "/users", UserController, except: [:new, :edit]
+    resources "/places", PlaceController, except: [:new, :edit]
   end
 end

@@ -9,6 +9,11 @@ defmodule Lunchr.Bucket do
   end
 
   def put(bucket, key, value) do
-    Agent.update(bucket, fn map -> Map.put(map, key, value) end)
+    {Agent.update(bucket, fn map -> Map.put(map, key, value) end), value}
   end
+
+  def all(bucket) do
+    Agent.get(bucket, fn map -> map end)
+  end
+
 end
