@@ -19,6 +19,14 @@ defmodule LunchrInterface.Router do
     get "/", PageController, :index
   end
 
+scope "/auth", LunchrInterface do
+  pipe_through :browser # Use the default browser stack
+
+  get "/:provider", AuthController, :index
+  get "/:provider/callback", AuthController, :callback
+  delete "/logout", AuthController, :delete
+end
+
   scope "/api", LunchrInterface do
     pipe_through :api
     resources "/users", UserController, except: [:new, :edit]

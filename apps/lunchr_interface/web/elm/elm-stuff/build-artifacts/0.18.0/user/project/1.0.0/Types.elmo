@@ -1,0 +1,41 @@
+var _user$project$Types$emptyAddPlaceForm = {name: '', cuisine: ''};
+var _user$project$Types$init = {
+	ctor: '_Tuple2',
+	_0: {places: _krisajenkins$remotedata$RemoteData$NotAsked, addPlaceForm: _user$project$Types$emptyAddPlaceForm},
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$Types$Model = F2(
+	function (a, b) {
+		return {places: a, addPlaceForm: b};
+	});
+var _user$project$Types$PlacesData = function (a) {
+	return {data: a};
+};
+var _user$project$Types$PlaceData = function (a) {
+	return {data: a};
+};
+var _user$project$Types$Place = F3(
+	function (a, b, c) {
+		return {name: a, id: b, cuisine: c};
+	});
+var _user$project$Types$AddPlaceForm = F2(
+	function (a, b) {
+		return {name: a, cuisine: b};
+	});
+var _user$project$Types$AddPlace = {ctor: 'AddPlace'};
+var _user$project$Types$AddPlaceFormUpdate = function (a) {
+	return {ctor: 'AddPlaceFormUpdate', _0: a};
+};
+var _user$project$Types$HandlePostPlace = function (a) {
+	return {ctor: 'HandlePostPlace', _0: a};
+};
+var _user$project$Types$HandlePlacesResponse = function (a) {
+	return {ctor: 'HandlePlacesResponse', _0: a};
+};
+var _user$project$Types$GetPlaces = {ctor: 'GetPlaces'};
+var _user$project$Types$Cuisine = function (a) {
+	return {ctor: 'Cuisine', _0: a};
+};
+var _user$project$Types$Name = function (a) {
+	return {ctor: 'Name', _0: a};
+};

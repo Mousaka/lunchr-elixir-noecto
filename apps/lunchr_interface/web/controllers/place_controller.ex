@@ -26,8 +26,6 @@ defmodule LunchrInterface.PlaceController do
         conn
         |> put_status(:unprocessable_entity)
         |> render(LunchrInterface.ChangesetView, "error.json", changeset: changeset)
-      other ->
-        IO.puts("other..")
       end
   end
 
