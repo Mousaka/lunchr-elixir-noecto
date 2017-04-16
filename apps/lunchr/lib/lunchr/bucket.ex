@@ -13,7 +13,7 @@ defmodule Lunchr.Bucket do
   end
 
   def all(bucket) do
-    Agent.get(bucket, fn map -> map end)
+    Agent.get(bucket, fn map -> Map.values(map) end)
   end
 
 end

@@ -38,6 +38,6 @@ defmodule Lunchr.RegistryTest do
   test "get all users", %{registry: registry} do
     {:ok, user_bucket} = Lunchr.Registry.lookup(registry, "users")
     allUsers = Lunchr.Bucket.all(user_bucket)
-    assert allUsers == %{"goduser" => %User{username: "goduser", name: "Kristian", token: 123}}
+    assert allUsers == [%User{username: "goduser", name: "Kristian", token: 123}]
   end
 end
