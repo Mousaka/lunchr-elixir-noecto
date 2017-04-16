@@ -17,6 +17,15 @@ defmodule Lunchr do
     :world
   end
 
+  def showPlaces() do
+    {:ok, bucket} = Lunchr.Registry.lookup(:lunchr_registry, "places")
+    Lunchr.Bucket.all(bucket)
+  end
+
+  def showPlace(id) do
+    {:ok, bucket} = Lunchr.Registry.lookup(:lunchr_registry, "places")
+    Lunchr.Bucket.get(bucket, id)
+  end
 
   def addPlace(place_params) do
     {:ok, bucket} = Lunchr.Registry.lookup(:lunchr_registry, "places")

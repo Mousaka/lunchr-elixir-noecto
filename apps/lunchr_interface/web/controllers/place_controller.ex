@@ -2,15 +2,11 @@ defmodule LunchrInterface.PlaceController do
   use LunchrInterface.Web, :controller
 
   def index(conn, _params) do
-    {:ok, bucket} = Lunchr.Registry.lookup(:lunchr_registry, "places")
-    places = Lunchr.Bucket.all(bucket)
-    render(conn, "index.json", places: places)
+    render(conn, "index.json", places: Lunchr.showPlaces())
   end
 
   def show(conn, %{"id" => id }) do
-    {:ok, bucket} = Lunchr.Registry.lookup(:lunchr_registry, "places")
-    item = Lunchr.Bucket.get(bucket, id)
-    json conn, item
+    json conn, Lunchr.showPlace(id)
   end
 
   def create(conn, %{"place" => place_params}) do
