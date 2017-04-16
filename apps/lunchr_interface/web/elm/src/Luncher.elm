@@ -86,7 +86,7 @@ addPlaceForm addPlaceForm =
     div []
         [ input [ placeholder "name", value addPlaceForm.name, onInput (addMsg Name) ] []
         , input [ placeholder "cuisine", value addPlaceForm.cuisine, onInput (addMsg Cuisine) ] []
-        , button [ onClick AddPlace ] [ Html.text "Nytt plejs" ]
+        , button [ onClick AddPlace ] [ Html.text "Nytt plejs!" ]
         ]
 
 
