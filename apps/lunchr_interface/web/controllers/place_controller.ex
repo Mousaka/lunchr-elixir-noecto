@@ -14,9 +14,7 @@ defmodule LunchrInterface.PlaceController do
   end
 
   def create(conn, %{"place" => place_params}) do
-    {:ok, bucket} = Lunchr.Registry.lookup(:lunchr_registry, "places")
-
-    case Lunchr.Bucket.put(bucket, UUID.uuid1(), place_params) do
+    case Lunchr.addPlace(place_params) do
       {:ok, place} ->
         conn
         |> put_status(:created)

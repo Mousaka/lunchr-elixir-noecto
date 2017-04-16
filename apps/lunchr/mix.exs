@@ -20,7 +20,7 @@ defmodule Lunchr.Mixfile do
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
     [extra_applications: [:logger],
-     mod: {Lunchr.Application, []}]
+     mod: {Lunchr.Application, [:uuid]}]
   end
 
   # Dependencies can be Hex packages:
@@ -33,6 +33,8 @@ defmodule Lunchr.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:uuid, "~> 1.1"}
+    ]
   end
 end

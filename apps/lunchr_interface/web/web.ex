@@ -28,6 +28,7 @@ defmodule LunchrInterface.Web do
 
       import LunchrInterface.Router.Helpers
       import LunchrInterface.Gettext
+      import Lunchr.Place
     end
   end
 

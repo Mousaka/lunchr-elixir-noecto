@@ -12,11 +12,12 @@ decodePlacesData =
         |> required "data" (Json.Decode.list decodePlace1)
 
 
-encodePlaces : PlacesData -> Json.Encode.Value
-encodePlaces record =
-    Json.Encode.object
-        [ ( "data", Json.Encode.list <| List.map encodePlace <| record.data )
-        ]
+
+-- encodePlaces : PlacesData -> Json.Encode.Value
+-- encodePlaces record =
+--     Json.Encode.object
+--         [ ( "data", Json.Encode.list <| List.map encodePlace <| record.data )
+--         ]
 
 
 decodePlace : Json.Decode.Decoder PlaceData
@@ -29,12 +30,12 @@ decodePlace1 : Json.Decode.Decoder Place
 decodePlace1 =
     Json.Decode.Pipeline.decode Place
         |> required "name" (Json.Decode.string)
-        |> required "id" (Json.Decode.int)
+        |> required "id" (Json.Decode.string)
         |> required "cuisine" (Json.Decode.string)
 
 
-encodePlace1 : Place -> Json.Encode.Value
-encodePlace1 record =
+encodeAddPlaceForm1 : AddPlaceForm -> Json.Encode.Value
+encodeAddPlaceForm1 record =
     Json.Encode.object
         [ ( "name", Json.Encode.string <| record.name )
           --        , ( "id", Json.Encode.int <| record.id )
@@ -42,8 +43,8 @@ encodePlace1 record =
         ]
 
 
-encodePlace : Place -> Json.Encode.Value
-encodePlace record =
+encodeAddPlaceForm : AddPlaceForm -> Json.Encode.Value
+encodeAddPlaceForm record =
     Json.Encode.object
-        [ ( "place", encodePlace1 <| record )
+        [ ( "place", encodeAddPlaceForm1 <| record )
         ]

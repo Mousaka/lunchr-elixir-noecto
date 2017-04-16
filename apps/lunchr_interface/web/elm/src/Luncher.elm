@@ -50,16 +50,7 @@ update msg model =
 
 postNewPlace : AddPlaceForm -> Cmd Msg
 postNewPlace place =
-    let
-        convertedPlace =
-            placeFormToPlace place
-    in
-        RemoteData.Http.post "/api/places/" HandlePostPlace decodePlace (encodePlace convertedPlace)
-
-
-placeFormToPlace : AddPlaceForm -> Place
-placeFormToPlace placeForm =
-    { name = placeForm.name, id = 0, cuisine = placeForm.cuisine }
+    RemoteData.Http.post "/api/places/" HandlePostPlace decodePlace (encodeAddPlaceForm place)
 
 
 updateAddPlaceForm : AddPlaceForm -> AddPlaceFormMsg -> AddPlaceForm

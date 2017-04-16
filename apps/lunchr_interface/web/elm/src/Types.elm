@@ -21,7 +21,7 @@ type alias PlaceData =
 
 type alias Place =
     { name : String
-    , id : Int
+    , id : String
     , cuisine : String
     }
 
