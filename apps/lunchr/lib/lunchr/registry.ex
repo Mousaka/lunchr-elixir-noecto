@@ -26,9 +26,7 @@ defmodule Lunchr.Registry do
   end
 
   def init(:ok) do
-    stateWithUserBucket = Map.put(%{}, "users", initUsers())
-    data = Map.put(stateWithUserBucket, "places", initPlaces())
-    {:ok, data}
+    {:ok, %{"users" => initUsers(), "places" => initPlaces(), "reviews" => initReviews()}}
   end
 
   defp initUsers() do
@@ -41,6 +39,11 @@ defmodule Lunchr.Registry do
   defp initPlaces() do
     {:ok, places_bucket} = Lunchr.Bucket.start_link
     places_bucket
+  end
+
+  defp initReviews() do
+    {:ok, reviews_bucket} = Lunchr.Bucket.start_link
+    reviews_bucket
   end
 
   def handle_call({:lookup, name}, _from, names) do

@@ -1,6 +1,6 @@
 defmodule Lunchr.Review do
-  @enforce_keys [:id, :place_id, :user_id, :comment, :rating]
-  defstruct @enforce_keys
+  @enforce_keys [:id, :place_id, :user_id, :rating]
+  defstruct [:id, :place_id, :user_id, :comment, :rating]
 
   def changeset(review_params) do
     atomified_params = for {key, val} <- review_params, into: %{}, do: {String.to_atom(key), val}

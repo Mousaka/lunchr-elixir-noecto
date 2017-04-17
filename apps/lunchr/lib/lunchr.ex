@@ -34,23 +34,27 @@ defmodule Lunchr do
     Lunchr.Bucket.put(bucket, uuid, place_struct)
   end
 
+  def addReview(user,place,review) do
+    {:ok, bucket} = Lunchr.Registry.lookup(:lunchr_registry, "reviews")
+
+  end
+
   def newUser(user_data) do
     {:ok, bucket} = Lunchr.Registry.lookup(:lunchr_registry, "users")
-    already_exist = Lunchr.Bucket.all(bucket) |>
-                      Enum.any?(fn u -> u.oauth_id == user_data.oauth_id end)
+    existing_user = Lunchr.Bucket.all(bucket) |>
+                      Enum.find(fn u -> u.oauth_id == user_data["oauth_id"] end)
 
-    case already_exist do
-      false ->
+    case existing_user do
+      nil ->
         IO.puts "storing user"
-        IO.inspect user_data
-        user = %{"oauth_id" => user_data.oauth_id, "name" => user_data.name, "username" => user_data.name}
+        user = %{"oauth_id" => user_data["oauth_id"], "name" => user_data["name"], "username" => user_data["name"]}
         uuid = UUID.uuid1()
         user_struct = Lunchr.User.changeset_withid(user, uuid)
-        IO.inspect(user_struct)
-        Lunchr.Bucket.put(bucket, uuid, user_struct)
-      true ->
+        {:ok, _} = Lunchr.Bucket.put(bucket, uuid, user_struct)
+        {:ok, Map.put(user_data, "id", uuid)}
+      usr ->
         IO.puts "user already existing"
-        {:ok, "existing user"}
+        {:ok, Map.put(user_data, "id", usr.id)}
     end
   end
 end

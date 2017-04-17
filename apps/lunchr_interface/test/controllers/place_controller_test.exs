@@ -1,14 +1,8 @@
 defmodule Lunchr.PlaceControllerTest do
-  use LunchrInterface.ConnCase, async: true
+  use LunchrInterface.ConnCase, async: false
 
   @valid_attrs %{"name" => "Knut", "cuisine" => "husman"}
   @valid_attrs_json %{"name" => "Knut", "cuisine" => "husman"}
-
-
-  setup context do
-    {:ok, registry} = Lunchr.Registry.start_link(context.test)
-    {:ok, registry: registry}
-  end
 
   setup %{conn: conn} do
     Lunchr.Registry.reset(:lunchr_registry)

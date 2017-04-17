@@ -8,18 +8,16 @@ defmodule LunchrInterface.AuthController do
 
   def callback(conn, %{"provider" => provider, "code" => code}) do
     token = get_token!(provider, code)
-    user = get_user!(provider, token)
+    user = get_user!(provider, token) |> store_user
     conn
     |> put_session(:current_user, user)
     |> put_session(:access_token, token.token.access_token)
-    |> store_user(user)
     #|> put_session(:access_token, token.access_token)
     |> redirect(to: "/")
   end
 
-  def store_user(conn, user) do
+  def store_user(user) do
     Lunchr.newUser(user)
-    conn
   end
 
   def delete(conn, _params) do
