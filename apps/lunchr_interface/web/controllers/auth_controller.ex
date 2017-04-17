@@ -17,7 +17,8 @@ defmodule LunchrInterface.AuthController do
   end
 
   def store_user(user) do
-    Lunchr.newUser(user)
+    {:ok, usrwithid} = Lunchr.newUser(user)
+    usrwithid
   end
 
   def delete(conn, _params) do
