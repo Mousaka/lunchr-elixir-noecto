@@ -36,9 +36,33 @@ update msg model =
                 NotAsked ->
                     ( model, Cmd.none )
 
+        HandleReviewsResponse data ->
+            ( { model | reviews = RemoteData.map .data data }
+            , Cmd.none
+            )
+
+        HandlePostReview data ->
+            case data of
+                Success _ ->
+                    ( { model | addReviewForm = Types.emptyAddReviewForm, reviews = Loading }, RemoteData.Http.get "/api/reviews/" HandleReviewsResponse decodeReviewsData )
+
+                Failure err ->
+                    ( model, Cmd.none )
+
+                Loading ->
+                    ( model, Cmd.none )
+
+                NotAsked ->
+                    ( model, Cmd.none )
+
         GetPlaces ->
             ( { model | places = Loading }
             , RemoteData.Http.get "/api/places/" HandlePlacesResponse decodePlacesData
+            )
+
+        GetReviews ->
+            ( { model | reviews = Loading }
+            , RemoteData.Http.get "/api/reviews/" HandleReviewsResponse decodeReviewsData
             )
 
         AddPlaceFormUpdate addPlaceFormMsg ->
@@ -68,7 +92,8 @@ view model =
     div []
         [ h1 [] [ Html.text "Lunchr" ]
         , addPlaceForm model.addPlaceForm
-        , viewPlaces model.places
+        , viewPlaces model.places "Places" GetPlaces
+        , viewPlaces model.reviews "Reviews" GetReviews
         ]
 
 
@@ -86,17 +111,17 @@ addMsg msg str =
     AddPlaceFormUpdate (msg str)
 
 
-viewPlaces : WebData (List Place) -> Html Msg
-viewPlaces places =
-    case places of
+viewPlaces : WebData (List a) -> String -> Msg -> Html Msg
+viewPlaces webData dataname buttonAction =
+    case webData of
         Loading ->
-            Html.text "Fetching places..."
+            Html.text "Fetching webData..."
 
         Success data ->
-            Html.text ("Recieved places: " ++ toString data)
+            Html.text ("Recieved webData: " ++ toString data)
 
         Failure error ->
             Html.text ("This went wrong: " ++ toString error)
 
         NotAsked ->
-            button [ onClick GetPlaces ] [ Html.text "Get places data from the server" ]
+            button [ onClick buttonAction ] [ Html.text ("Get " ++ dataname ++ " from the server") ]

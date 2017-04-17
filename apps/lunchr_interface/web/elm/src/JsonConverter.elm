@@ -12,12 +12,10 @@ decodePlacesData =
         |> required "data" (Json.Decode.list decodePlace1)
 
 
-
--- encodePlaces : PlacesData -> Json.Encode.Value
--- encodePlaces record =
---     Json.Encode.object
---         [ ( "data", Json.Encode.list <| List.map encodePlace <| record.data )
---         ]
+decodeReviewsData : Json.Decode.Decoder ReviewsData
+decodeReviewsData =
+    Json.Decode.Pipeline.decode ReviewsData
+        |> required "data" (Json.Decode.list decodeReview1)
 
 
 decodePlace : Json.Decode.Decoder PlaceData
@@ -34,6 +32,16 @@ decodePlace1 =
         |> required "cuisine" (Json.Decode.string)
 
 
+decodeReview1 : Json.Decode.Decoder Review
+decodeReview1 =
+    Json.Decode.Pipeline.decode Review
+        |> required "id" (Json.Decode.string)
+        |> required "user_id" (Json.Decode.string)
+        |> required "place_id" (Json.Decode.string)
+        |> required "rating" (Json.Decode.float)
+        |> required "comment" (Json.Decode.string)
+
+
 encodeAddPlaceForm1 : AddPlaceForm -> Json.Encode.Value
 encodeAddPlaceForm1 record =
     Json.Encode.object
@@ -47,4 +55,21 @@ encodeAddPlaceForm : AddPlaceForm -> Json.Encode.Value
 encodeAddPlaceForm record =
     Json.Encode.object
         [ ( "place", encodeAddPlaceForm1 <| record )
+        ]
+
+
+encodeAddReviewForm1 : AddReviewForm -> Json.Encode.Value
+encodeAddReviewForm1 record =
+    Json.Encode.object
+        [ ( "rating", Json.Encode.float <| record.rating )
+          --        , ( "id", Json.Encode.int <| record.id )
+        , ( "comment", Json.Encode.string <| record.comment )
+        , ( "place_id", Json.Encode.string <| record.place_id )
+        ]
+
+
+encodeAddReviewForm : AddReviewForm -> Json.Encode.Value
+encodeAddReviewForm record =
+    Json.Encode.object
+        [ ( "review", encodeAddReviewForm1 <| record )
         ]

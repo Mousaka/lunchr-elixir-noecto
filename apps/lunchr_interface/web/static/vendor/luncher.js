@@ -9547,16 +9547,20 @@ var _ohanhi$remotedata_http$RemoteData_Http$Config = F3(
 	});
 
 var _user$project$Types$emptyAddPlaceForm = {name: '', cuisine: ''};
+var _user$project$Types$emptyAddReviewForm = {comment: '', place_id: '', rating: 5.1};
 var _user$project$Types$init = {
 	ctor: '_Tuple2',
-	_0: {places: _krisajenkins$remotedata$RemoteData$NotAsked, addPlaceForm: _user$project$Types$emptyAddPlaceForm},
+	_0: {places: _krisajenkins$remotedata$RemoteData$NotAsked, reviews: _krisajenkins$remotedata$RemoteData$NotAsked, addPlaceForm: _user$project$Types$emptyAddPlaceForm, addReviewForm: _user$project$Types$emptyAddReviewForm},
 	_1: _elm_lang$core$Platform_Cmd$none
 };
-var _user$project$Types$Model = F2(
-	function (a, b) {
-		return {places: a, addPlaceForm: b};
+var _user$project$Types$Model = F4(
+	function (a, b, c, d) {
+		return {places: a, reviews: b, addPlaceForm: c, addReviewForm: d};
 	});
 var _user$project$Types$PlacesData = function (a) {
+	return {data: a};
+};
+var _user$project$Types$ReviewsData = function (a) {
 	return {data: a};
 };
 var _user$project$Types$PlaceData = function (a) {
@@ -9566,6 +9570,14 @@ var _user$project$Types$Place = F3(
 	function (a, b, c) {
 		return {name: a, id: b, cuisine: c};
 	});
+var _user$project$Types$AddReviewForm = F3(
+	function (a, b, c) {
+		return {rating: a, comment: b, place_id: c};
+	});
+var _user$project$Types$Review = F5(
+	function (a, b, c, d, e) {
+		return {id: a, user_id: b, place_id: c, rating: d, comment: e};
+	});
 var _user$project$Types$AddPlaceForm = F2(
 	function (a, b) {
 		return {name: a, cuisine: b};
@@ -9574,12 +9586,19 @@ var _user$project$Types$AddPlace = {ctor: 'AddPlace'};
 var _user$project$Types$AddPlaceFormUpdate = function (a) {
 	return {ctor: 'AddPlaceFormUpdate', _0: a};
 };
+var _user$project$Types$HandlePostReview = function (a) {
+	return {ctor: 'HandlePostReview', _0: a};
+};
+var _user$project$Types$HandleReviewsResponse = function (a) {
+	return {ctor: 'HandleReviewsResponse', _0: a};
+};
 var _user$project$Types$HandlePostPlace = function (a) {
 	return {ctor: 'HandlePostPlace', _0: a};
 };
 var _user$project$Types$HandlePlacesResponse = function (a) {
 	return {ctor: 'HandlePlacesResponse', _0: a};
 };
+var _user$project$Types$GetReviews = {ctor: 'GetReviews'};
 var _user$project$Types$GetPlaces = {ctor: 'GetPlaces'};
 var _user$project$Types$Cuisine = function (a) {
 	return {ctor: 'Cuisine', _0: a};
@@ -9588,6 +9607,46 @@ var _user$project$Types$Name = function (a) {
 	return {ctor: 'Name', _0: a};
 };
 
+var _user$project$JsonConverter$encodeAddReviewForm1 = function (record) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'rating',
+				_1: _elm_lang$core$Json_Encode$float(record.rating)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'comment',
+					_1: _elm_lang$core$Json_Encode$string(record.comment)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'place_id',
+						_1: _elm_lang$core$Json_Encode$string(record.place_id)
+					},
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$JsonConverter$encodeAddReviewForm = function (record) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'review',
+				_1: _user$project$JsonConverter$encodeAddReviewForm1(record)
+			},
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$JsonConverter$encodeAddPlaceForm1 = function (record) {
 	return _elm_lang$core$Json_Encode$object(
 		{
@@ -9620,6 +9679,27 @@ var _user$project$JsonConverter$encodeAddPlaceForm = function (record) {
 			_1: {ctor: '[]'}
 		});
 };
+var _user$project$JsonConverter$decodeReview1 = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'comment',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'rating',
+		_elm_lang$core$Json_Decode$float,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'place_id',
+			_elm_lang$core$Json_Decode$string,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'user_id',
+				_elm_lang$core$Json_Decode$string,
+				A3(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+					'id',
+					_elm_lang$core$Json_Decode$string,
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Review))))));
 var _user$project$JsonConverter$decodePlace1 = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'cuisine',
@@ -9638,44 +9718,54 @@ var _user$project$JsonConverter$decodePlace = A3(
 	'data',
 	_user$project$JsonConverter$decodePlace1,
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$PlaceData));
+var _user$project$JsonConverter$decodeReviewsData = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'data',
+	_elm_lang$core$Json_Decode$list(_user$project$JsonConverter$decodeReview1),
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$ReviewsData));
 var _user$project$JsonConverter$decodePlacesData = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'data',
 	_elm_lang$core$Json_Decode$list(_user$project$JsonConverter$decodePlace1),
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$PlacesData));
 
-var _user$project$Luncher$viewPlaces = function (places) {
-	var _p0 = places;
-	switch (_p0.ctor) {
-		case 'Loading':
-			return _elm_lang$html$Html$text('Fetching places...');
-		case 'Success':
-			return _elm_lang$html$Html$text(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'Recieved places: ',
-					_elm_lang$core$Basics$toString(_p0._0)));
-		case 'Failure':
-			return _elm_lang$html$Html$text(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'This went wrong: ',
-					_elm_lang$core$Basics$toString(_p0._0)));
-		default:
-			return A2(
-				_elm_lang$html$Html$button,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GetPlaces),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Get places data from the server'),
-					_1: {ctor: '[]'}
-				});
-	}
-};
+var _user$project$Luncher$viewPlaces = F3(
+	function (webData, dataname, buttonAction) {
+		var _p0 = webData;
+		switch (_p0.ctor) {
+			case 'Loading':
+				return _elm_lang$html$Html$text('Fetching webData...');
+			case 'Success':
+				return _elm_lang$html$Html$text(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'Recieved webData: ',
+						_elm_lang$core$Basics$toString(_p0._0)));
+			case 'Failure':
+				return _elm_lang$html$Html$text(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'This went wrong: ',
+						_elm_lang$core$Basics$toString(_p0._0)));
+			default:
+				return A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(buttonAction),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'Get ',
+								A2(_elm_lang$core$Basics_ops['++'], dataname, ' from the server'))),
+						_1: {ctor: '[]'}
+					});
+		}
+	});
 var _user$project$Luncher$addMsg = F2(
 	function (msg, str) {
 		return _user$project$Types$AddPlaceFormUpdate(
@@ -9761,8 +9851,12 @@ var _user$project$Luncher$view = function (model) {
 				_0: _user$project$Luncher$addPlaceForm(model.addPlaceForm),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Luncher$viewPlaces(model.places),
-					_1: {ctor: '[]'}
+					_0: A3(_user$project$Luncher$viewPlaces, model.places, 'Places', _user$project$Types$GetPlaces),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Luncher$viewPlaces, model.reviews, 'Reviews', _user$project$Types$GetReviews),
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		});
@@ -9825,6 +9919,39 @@ var _user$project$Luncher$update = F2(
 					default:
 						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
+			case 'HandleReviewsResponse':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							reviews: A2(
+								_krisajenkins$remotedata$RemoteData$map,
+								function (_) {
+									return _.data;
+								},
+								_p2._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'HandlePostReview':
+				var _p4 = _p2._0;
+				switch (_p4.ctor) {
+					case 'Success':
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{addReviewForm: _user$project$Types$emptyAddReviewForm, reviews: _krisajenkins$remotedata$RemoteData$Loading}),
+							_1: A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/reviews/', _user$project$Types$HandleReviewsResponse, _user$project$JsonConverter$decodeReviewsData)
+						};
+					case 'Failure':
+						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+					case 'Loading':
+						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+					default:
+						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
 			case 'GetPlaces':
 				return {
 					ctor: '_Tuple2',
@@ -9832,6 +9959,14 @@ var _user$project$Luncher$update = F2(
 						model,
 						{places: _krisajenkins$remotedata$RemoteData$Loading}),
 					_1: A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/places/', _user$project$Types$HandlePlacesResponse, _user$project$JsonConverter$decodePlacesData)
+				};
+			case 'GetReviews':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{reviews: _krisajenkins$remotedata$RemoteData$Loading}),
+					_1: A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/reviews/', _user$project$Types$HandleReviewsResponse, _user$project$JsonConverter$decodeReviewsData)
 				};
 			case 'AddPlaceFormUpdate':
 				return {
@@ -9854,7 +9989,7 @@ var _user$project$Luncher$update = F2(
 var _user$project$Luncher$main = _elm_lang$html$Html$program(
 	{
 		init: _user$project$Types$init,
-		subscriptions: function (_p4) {
+		subscriptions: function (_p5) {
 			return _elm_lang$core$Platform_Sub$none;
 		},
 		update: _user$project$Luncher$update,
