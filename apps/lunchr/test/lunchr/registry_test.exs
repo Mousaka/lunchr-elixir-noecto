@@ -32,12 +32,12 @@ defmodule Lunchr.RegistryTest do
 
   test "find goduser", %{registry: registry} do
     assert {:ok, user_bucket} = Lunchr.Registry.lookup(registry, "users")
-    assert Lunchr.Bucket.get(user_bucket, "goduser") == %User{username: "goduser", name: "Kristian", token: 123}
+    assert Lunchr.Bucket.get(user_bucket, "goduser") == %User{username: "goduser", name: "Kristian", oauth_id: "123", id: "uuid-123"}
   end
 
   test "get all users", %{registry: registry} do
     {:ok, user_bucket} = Lunchr.Registry.lookup(registry, "users")
     allUsers = Lunchr.Bucket.all(user_bucket)
-    assert allUsers == [%User{username: "goduser", name: "Kristian", token: 123}]
+    assert allUsers == [%User{username: "goduser", name: "Kristian", oauth_id: "123", id: "uuid-123"}]
   end
 end

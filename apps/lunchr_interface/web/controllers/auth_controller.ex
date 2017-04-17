@@ -12,8 +12,14 @@ defmodule LunchrInterface.AuthController do
     conn
     |> put_session(:current_user, user)
     |> put_session(:access_token, token.token.access_token)
+    |> store_user(user)
     #|> put_session(:access_token, token.access_token)
     |> redirect(to: "/")
+  end
+
+  def store_user(conn, user) do
+    Lunchr.newUser(user)
+    conn
   end
 
   def delete(conn, _params) do
@@ -55,6 +61,7 @@ defmodule LunchrInterface.AuthController do
 
   defp get_user!("github", client) do
     %{body: user} = OAuth2.Client.get!(client, "/user")
-    %{name: user["name"], avatar: user["avatar_url"]}
+    # IO.inspect(user)
+    %{name: user["name"], avatar: user["avatar_url"], oauth_id: user["id"]}
   end
 end

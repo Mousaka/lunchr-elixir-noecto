@@ -36,6 +36,7 @@ apps/lunchr_interface/node_modules
 # this depending on your deployment strategy.
 apps/lunchr_interface/priv/static/
 apps/lunchr_interface/web/elm/elm-stuff/
+# apps/lunchr_interface/web/static/vendor
 
 # The config/prod.secret.exs file by default contains sensitive
 # data and you should not commit it into version control.

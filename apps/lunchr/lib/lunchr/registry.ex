@@ -33,7 +33,7 @@ defmodule Lunchr.Registry do
 
   defp initUsers() do
     {:ok, user_bucket} = Lunchr.Bucket.start_link
-    goduser = %User{username: "goduser", name: "Kristian", token: 123}
+    goduser = %User{username: "goduser", name: "Kristian", oauth_id: "123", id: "uuid-123"}
     Lunchr.Bucket.put(user_bucket, "goduser", goduser)
     user_bucket
   end
