@@ -11,7 +11,7 @@ defmodule Lunchr.AuthControllerTest do
 
   test "store new user" do
     user = %{"name" => "pelle", "oauth_id" => "111"}
-    {:ok, user_withid} = LunchrInterface.AuthController.store_user(user)
+    user_withid = LunchrInterface.AuthController.store_user(user)
     assert 0 != String.length(user_withid["id"])
   end
 
@@ -19,8 +19,8 @@ defmodule Lunchr.AuthControllerTest do
 
   test "existing user gives user with uuid" do
     user = %{"name" => "pelle", "oauth_id" => "111"}
-    {:ok, _} = LunchrInterface.AuthController.store_user(user)
-    {:ok, user_withid} = LunchrInterface.AuthController.store_user(user)
+    LunchrInterface.AuthController.store_user(user)
+    user_withid = LunchrInterface.AuthController.store_user(user)
     assert 0 != String.length(user_withid["id"])
   end
 

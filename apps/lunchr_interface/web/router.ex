@@ -31,5 +31,6 @@ end
     pipe_through :api
     resources "/users", UserController, except: [:new, :edit]
     resources "/places", PlaceController, except: [:new, :edit]
+    resources "/reviews", ReviewController, except: [:new, :edit]
   end
 end
