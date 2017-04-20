@@ -9,15 +9,24 @@ defmodule LunchrInterface.PlaceView do
     %{data: render_one(place, LunchrInterface.PlaceView, "place.json")}
   end
 
-  def render("place.json", %{place: {newid, place}}) do
-    %{name: place.name,
-      cuisine: place.cuisine,
-      id: place.id}
-  end
+  # def render("place.json", %{place: {newid, place}}) do
+    # place
+    # %{name: place.name,
+    #   cuisine: place.cuisine,
+    #   address: place.address,
+    #   description: place.description,
+    #   price: place.price,
+    #   coffee: place.coffee,
+    #   id: place.id}
+  # end
 
   def render("place.json", %{place: place}) do
     %{name: place.name,
       cuisine: place.cuisine,
+      address: place.address,
+      description: place.description,
+      price: place.price,
+      coffee: place.coffee,
       id: place.id}
   end
 end

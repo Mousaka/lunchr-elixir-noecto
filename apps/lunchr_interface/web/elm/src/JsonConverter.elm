@@ -1,7 +1,7 @@
 module JsonConverter exposing (..)
 
 import Json.Encode
-import Json.Decode
+import Json.Decode exposing (..)
 import Json.Decode.Pipeline exposing (required)
 import Types exposing (..)
 
@@ -29,7 +29,11 @@ decodePlace1 =
     Json.Decode.Pipeline.decode Place
         |> required "name" (Json.Decode.string)
         |> required "id" (Json.Decode.string)
-        |> required "cuisine" (Json.Decode.string)
+        |> required "cuisine" (nullable Json.Decode.string)
+        |> required "address" (nullable Json.Decode.string)
+        |> required "price" (nullable Json.Decode.string)
+        |> required "coffee" (nullable Json.Decode.bool)
+        |> required "description" (nullable Json.Decode.string)
 
 
 decodeReview1 : Json.Decode.Decoder Review
@@ -46,7 +50,8 @@ encodeAddPlaceForm1 : AddPlaceForm -> Json.Encode.Value
 encodeAddPlaceForm1 record =
     Json.Encode.object
         [ ( "name", Json.Encode.string <| record.name )
-          --        , ( "id", Json.Encode.int <| record.id )
+
+        --        , ( "id", Json.Encode.int <| record.id )
         , ( "cuisine", Json.Encode.string <| record.cuisine )
         ]
 
@@ -62,7 +67,8 @@ encodeAddReviewForm1 : AddReviewForm -> Json.Encode.Value
 encodeAddReviewForm1 record =
     Json.Encode.object
         [ ( "rating", Json.Encode.float <| record.rating )
-          --        , ( "id", Json.Encode.int <| record.id )
+
+        --        , ( "id", Json.Encode.int <| record.id )
         , ( "comment", Json.Encode.string <| record.comment )
         , ( "place_id", Json.Encode.string <| record.place_id )
         ]

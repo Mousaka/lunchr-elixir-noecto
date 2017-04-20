@@ -2,7 +2,7 @@ module Luncher exposing (..)
 
 import Html exposing (Html, h1, program, div, button, input)
 import Html.Events exposing (onClick, onInput)
-import Html.Attributes exposing (placeholder, value)
+import Html.Attributes exposing (placeholder, value, class, style)
 import JsonConverter exposing (..)
 import RemoteData exposing (RemoteData(..), WebData, map)
 import RemoteData.Http
@@ -12,6 +12,28 @@ import Types exposing (..)
 main : Program Never Model Msg
 main =
     program { init = init, subscriptions = (\_ -> Sub.none), update = update, view = view }
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( { places = NotAsked
+      , reviews = NotAsked
+      , addPlaceForm = emptyAddPlaceForm
+      , addReviewForm = emptyAddReviewForm
+      , showReviewForm = Nothing
+      }
+    , getPlaces
+    )
+
+
+emptyAddReviewForm : AddReviewForm
+emptyAddReviewForm =
+    { comment = "", place_id = "", rating = 5.1 }
+
+
+emptyAddPlaceForm : AddPlaceForm
+emptyAddPlaceForm =
+    { name = "", cuisine = "" }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -25,7 +47,7 @@ update msg model =
         HandlePostPlace data ->
             case data of
                 Success _ ->
-                    ( { model | addPlaceForm = Types.emptyAddPlaceForm, places = Loading }, RemoteData.Http.get "/api/places/" HandlePlacesResponse decodePlacesData )
+                    ( { model | addPlaceForm = emptyAddPlaceForm, places = Loading }, getPlaces )
 
                 Failure err ->
                     ( model, Cmd.none )
@@ -44,7 +66,7 @@ update msg model =
         HandlePostReview data ->
             case data of
                 Success _ ->
-                    ( { model | addReviewForm = Types.emptyAddReviewForm, reviews = Loading }, RemoteData.Http.get "/api/reviews/" HandleReviewsResponse decodeReviewsData )
+                    ( { model | addReviewForm = emptyAddReviewForm, reviews = Loading }, RemoteData.Http.get "/api/reviews/" HandleReviewsResponse decodeReviewsData )
 
                 Failure err ->
                     ( model, Cmd.none )
@@ -71,6 +93,14 @@ update msg model =
         AddPlace ->
             ( model, postNewPlace model.addPlaceForm )
 
+        ShowReviewForm placeId ->
+            ( { model | showReviewForm = Just placeId }, Cmd.none )
+
+
+getPlaces : Cmd Msg
+getPlaces =
+    RemoteData.Http.get "/api/places/" HandlePlacesResponse decodePlacesData
+
 
 postNewPlace : AddPlaceForm -> Cmd Msg
 postNewPlace place =
@@ -90,11 +120,76 @@ updateAddPlaceForm addPlaceForm msg =
 view : Model -> Html Msg
 view model =
     div []
-        [ h1 [] [ Html.text "Lunchr" ]
-        , addPlaceForm model.addPlaceForm
+        [ addPlaceForm model.addPlaceForm
+        , placeList model.showReviewForm model.places
         , viewPlaces model.places "Places" GetPlaces
         , viewPlaces model.reviews "Reviews" GetReviews
         ]
+
+
+placeList : Maybe String -> WebData (List Place) -> Html Msg
+placeList showRatingOnThisPlaceId places =
+    div [] <|
+        case places of
+            Success data ->
+                List.map (viewPlace showRatingOnThisPlaceId) data
+
+            _ ->
+                []
+
+
+viewPlace : Maybe String -> Place -> Html Msg
+viewPlace showRatingOnThisPlaceId place =
+    div [ style [ ( "border", "1px solid #ccc" ) ] ]
+        [ Html.h3 [] [ Html.text ("Namn: " ++ place.name) ]
+        , Html.h4 [] [ Html.text ("Beskrivning: " ++ (Maybe.withDefault "" place.description)) ]
+        , Html.h4 [] [ Html.text ("Cuisine: " ++ (Maybe.withDefault "" place.cuisine)) ]
+        , Html.h4 [] [ Html.text ("Adress: " ++ (Maybe.withDefault "" place.address)) ]
+        , Html.h4 [] [ Html.text ("Prisklass: " ++ (Maybe.withDefault "" place.price)) ]
+        , Html.h4 []
+            [ Html.text ("Ingår kaffe: " ++ (boolToString place.coffee))
+            , rating showRatingOnThisPlaceId place.id
+            ]
+        ]
+
+
+rating : Maybe String -> String -> Html Msg
+rating showingPlace placeId =
+    div [ onClick (ShowReviewForm placeId) ]
+        [ Html.span [ class "glyphicon-plus" ] []
+        , Html.span [ class "glyphicon-plus" ] []
+        , Html.span [ class "glyphicon-plus" ] []
+        , Html.span [ class "glyphicon-plus" ] []
+        , Html.span [ class "glyphicon-plus" ] []
+        , div [] <| showPlaceMaybe showingPlace placeId
+        ]
+
+
+showPlaceMaybe : Maybe String -> String -> List (Html Msg)
+showPlaceMaybe showingPlace placeId =
+    let
+        same id1 =
+            if id1 == placeId then
+                [ Html.input [ placeholder "Skriv recension" ] [] ]
+            else
+                []
+    in
+        Maybe.withDefault [] (Maybe.map same showingPlace)
+
+
+boolToString : Maybe Bool -> String
+boolToString bool =
+    case bool of
+        Just b ->
+            case b of
+                True ->
+                    "Ja"
+
+                False ->
+                    "Nej"
+
+        Nothing ->
+            ""
 
 
 addPlaceForm : AddPlaceForm -> Html Msg

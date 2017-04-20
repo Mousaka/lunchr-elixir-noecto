@@ -8,6 +8,7 @@ type alias Model =
     , reviews : WebData (List Review)
     , addPlaceForm : AddPlaceForm
     , addReviewForm : AddReviewForm
+    , showReviewForm : Maybe String
     }
 
 
@@ -29,7 +30,11 @@ type alias PlaceData =
 type alias Place =
     { name : String
     , id : String
-    , cuisine : String
+    , cuisine : Maybe String
+    , address : Maybe String
+    , price : Maybe String
+    , coffee : Maybe Bool
+    , description : Maybe String
     }
 
 
@@ -55,27 +60,6 @@ type alias AddPlaceForm =
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( { places = NotAsked
-      , reviews = NotAsked
-      , addPlaceForm = emptyAddPlaceForm
-      , addReviewForm = emptyAddReviewForm
-      }
-    , Cmd.none
-    )
-
-
-emptyAddReviewForm : AddReviewForm
-emptyAddReviewForm =
-    { comment = "", place_id = "", rating = 5.1 }
-
-
-emptyAddPlaceForm : AddPlaceForm
-emptyAddPlaceForm =
-    { name = "", cuisine = "" }
-
-
 type Msg
     = GetPlaces
     | GetReviews
@@ -85,6 +69,7 @@ type Msg
     | HandlePostReview (WebData ReviewsData)
     | AddPlaceFormUpdate AddPlaceFormMsg
     | AddPlace
+    | ShowReviewForm String
 
 
 type AddPlaceFormMsg

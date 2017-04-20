@@ -1,6 +1,7 @@
 defmodule Lunchr.Place do
-  @enforce_keys [:name, :cuisine, :id]
-  defstruct @enforce_keys
+  @enforce_keys [:name, :id]
+  defstruct [:id, :name, :cuisine, :address, :description, :price, :coffee]
+
 
   def changeset(place_params) do
     atomified_params = for {key, val} <- place_params, into: %{}, do: {String.to_atom(key), val}

@@ -9546,16 +9546,9 @@ var _ohanhi$remotedata_http$RemoteData_Http$Config = F3(
 		return {headers: a, withCredentials: b, timeout: c};
 	});
 
-var _user$project$Types$emptyAddPlaceForm = {name: '', cuisine: ''};
-var _user$project$Types$emptyAddReviewForm = {comment: '', place_id: '', rating: 5.1};
-var _user$project$Types$init = {
-	ctor: '_Tuple2',
-	_0: {places: _krisajenkins$remotedata$RemoteData$NotAsked, reviews: _krisajenkins$remotedata$RemoteData$NotAsked, addPlaceForm: _user$project$Types$emptyAddPlaceForm, addReviewForm: _user$project$Types$emptyAddReviewForm},
-	_1: _elm_lang$core$Platform_Cmd$none
-};
-var _user$project$Types$Model = F4(
-	function (a, b, c, d) {
-		return {places: a, reviews: b, addPlaceForm: c, addReviewForm: d};
+var _user$project$Types$Model = F5(
+	function (a, b, c, d, e) {
+		return {places: a, reviews: b, addPlaceForm: c, addReviewForm: d, showReviewForm: e};
 	});
 var _user$project$Types$PlacesData = function (a) {
 	return {data: a};
@@ -9566,9 +9559,9 @@ var _user$project$Types$ReviewsData = function (a) {
 var _user$project$Types$PlaceData = function (a) {
 	return {data: a};
 };
-var _user$project$Types$Place = F3(
-	function (a, b, c) {
-		return {name: a, id: b, cuisine: c};
+var _user$project$Types$Place = F7(
+	function (a, b, c, d, e, f, g) {
+		return {name: a, id: b, cuisine: c, address: d, price: e, coffee: f, description: g};
 	});
 var _user$project$Types$AddReviewForm = F3(
 	function (a, b, c) {
@@ -9582,6 +9575,9 @@ var _user$project$Types$AddPlaceForm = F2(
 	function (a, b) {
 		return {name: a, cuisine: b};
 	});
+var _user$project$Types$ShowReviewForm = function (a) {
+	return {ctor: 'ShowReviewForm', _0: a};
+};
 var _user$project$Types$AddPlace = {ctor: 'AddPlace'};
 var _user$project$Types$AddPlaceFormUpdate = function (a) {
 	return {ctor: 'AddPlaceFormUpdate', _0: a};
@@ -9702,17 +9698,33 @@ var _user$project$JsonConverter$decodeReview1 = A3(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Review))))));
 var _user$project$JsonConverter$decodePlace1 = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'cuisine',
-	_elm_lang$core$Json_Decode$string,
+	'description',
+	_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'id',
-		_elm_lang$core$Json_Decode$string,
+		'coffee',
+		_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$bool),
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'name',
-			_elm_lang$core$Json_Decode$string,
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Place))));
+			'price',
+			_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'address',
+				_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+				A3(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+					'cuisine',
+					_elm_lang$core$Json_Decode$nullable(_elm_lang$core$Json_Decode$string),
+					A3(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+						'id',
+						_elm_lang$core$Json_Decode$string,
+						A3(
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+							'name',
+							_elm_lang$core$Json_Decode$string,
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Place))))))));
 var _user$project$JsonConverter$decodePlace = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'data',
@@ -9832,23 +9844,248 @@ var _user$project$Luncher$addPlaceForm = function (addPlaceForm) {
 			}
 		});
 };
+var _user$project$Luncher$boolToString = function (bool) {
+	var _p1 = bool;
+	if (_p1.ctor === 'Just') {
+		var _p2 = _p1._0;
+		if (_p2 === true) {
+			return 'Ja';
+		} else {
+			return 'Nej';
+		}
+	} else {
+		return '';
+	}
+};
+var _user$project$Luncher$showPlaceMaybe = F2(
+	function (showingPlace, placeId) {
+		var same = function (id1) {
+			return _elm_lang$core$Native_Utils.eq(id1, placeId) ? {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$placeholder('Skriv recension'),
+						_1: {ctor: '[]'}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			} : {ctor: '[]'};
+		};
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			{ctor: '[]'},
+			A2(_elm_lang$core$Maybe$map, same, showingPlace));
+	});
+var _user$project$Luncher$rating = F2(
+	function (showingPlace, placeId) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$Types$ShowReviewForm(placeId)),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$span,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('glyphicon-plus'),
+						_1: {ctor: '[]'}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$span,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('glyphicon-plus'),
+							_1: {ctor: '[]'}
+						},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$span,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('glyphicon-plus'),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$span,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('glyphicon-plus'),
+									_1: {ctor: '[]'}
+								},
+								{ctor: '[]'}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$span,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('glyphicon-plus'),
+										_1: {ctor: '[]'}
+									},
+									{ctor: '[]'}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$div,
+										{ctor: '[]'},
+										A2(_user$project$Luncher$showPlaceMaybe, showingPlace, placeId)),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			});
+	});
+var _user$project$Luncher$viewPlace = F2(
+	function (showRatingOnThisPlaceId, place) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid #ccc'},
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h3,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(_elm_lang$core$Basics_ops['++'], 'Namn: ', place.name)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$h4,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'Beskrivning: ',
+									A2(_elm_lang$core$Maybe$withDefault, '', place.description))),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h4,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										'Cuisine: ',
+										A2(_elm_lang$core$Maybe$withDefault, '', place.cuisine))),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$h4,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'Adress: ',
+											A2(_elm_lang$core$Maybe$withDefault, '', place.address))),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$h4,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												'Prisklass: ',
+												A2(_elm_lang$core$Maybe$withDefault, '', place.price))),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$h4,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													'Ingår kaffe: ',
+													_user$project$Luncher$boolToString(place.coffee))),
+											_1: {
+												ctor: '::',
+												_0: A2(_user$project$Luncher$rating, showRatingOnThisPlaceId, place.id),
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			});
+	});
+var _user$project$Luncher$placeList = F2(
+	function (showRatingOnThisPlaceId, places) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			function () {
+				var _p3 = places;
+				if (_p3.ctor === 'Success') {
+					return A2(
+						_elm_lang$core$List$map,
+						_user$project$Luncher$viewPlace(showRatingOnThisPlaceId),
+						_p3._0);
+				} else {
+					return {ctor: '[]'};
+				}
+			}());
+	});
 var _user$project$Luncher$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$h1,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Lunchr'),
-					_1: {ctor: '[]'}
-				}),
+			_0: _user$project$Luncher$addPlaceForm(model.addPlaceForm),
 			_1: {
 				ctor: '::',
-				_0: _user$project$Luncher$addPlaceForm(model.addPlaceForm),
+				_0: A2(_user$project$Luncher$placeList, model.showReviewForm, model.places),
 				_1: {
 					ctor: '::',
 					_0: A3(_user$project$Luncher$viewPlaces, model.places, 'Places', _user$project$Types$GetPlaces),
@@ -9863,15 +10100,15 @@ var _user$project$Luncher$view = function (model) {
 };
 var _user$project$Luncher$updateAddPlaceForm = F2(
 	function (addPlaceForm, msg) {
-		var _p1 = msg;
-		if (_p1.ctor === 'Name') {
+		var _p4 = msg;
+		if (_p4.ctor === 'Name') {
 			return _elm_lang$core$Native_Utils.update(
 				addPlaceForm,
-				{name: _p1._0});
+				{name: _p4._0});
 		} else {
 			return _elm_lang$core$Native_Utils.update(
 				addPlaceForm,
-				{cuisine: _p1._0});
+				{cuisine: _p4._0});
 		}
 	});
 var _user$project$Luncher$postNewPlace = function (place) {
@@ -9882,10 +10119,13 @@ var _user$project$Luncher$postNewPlace = function (place) {
 		_user$project$JsonConverter$decodePlace,
 		_user$project$JsonConverter$encodeAddPlaceForm(place));
 };
+var _user$project$Luncher$getPlaces = A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/places/', _user$project$Types$HandlePlacesResponse, _user$project$JsonConverter$decodePlacesData);
+var _user$project$Luncher$emptyAddPlaceForm = {name: '', cuisine: ''};
+var _user$project$Luncher$emptyAddReviewForm = {comment: '', place_id: '', rating: 5.1};
 var _user$project$Luncher$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		switch (_p2.ctor) {
+		var _p5 = msg;
+		switch (_p5.ctor) {
 			case 'HandlePlacesResponse':
 				return {
 					ctor: '_Tuple2',
@@ -9897,20 +10137,20 @@ var _user$project$Luncher$update = F2(
 								function (_) {
 									return _.data;
 								},
-								_p2._0)
+								_p5._0)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'HandlePostPlace':
-				var _p3 = _p2._0;
-				switch (_p3.ctor) {
+				var _p6 = _p5._0;
+				switch (_p6.ctor) {
 					case 'Success':
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
-								{addPlaceForm: _user$project$Types$emptyAddPlaceForm, places: _krisajenkins$remotedata$RemoteData$Loading}),
-							_1: A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/places/', _user$project$Types$HandlePlacesResponse, _user$project$JsonConverter$decodePlacesData)
+								{addPlaceForm: _user$project$Luncher$emptyAddPlaceForm, places: _krisajenkins$remotedata$RemoteData$Loading}),
+							_1: _user$project$Luncher$getPlaces
 						};
 					case 'Failure':
 						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -9930,19 +10170,19 @@ var _user$project$Luncher$update = F2(
 								function (_) {
 									return _.data;
 								},
-								_p2._0)
+								_p5._0)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'HandlePostReview':
-				var _p4 = _p2._0;
-				switch (_p4.ctor) {
+				var _p7 = _p5._0;
+				switch (_p7.ctor) {
 					case 'Success':
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
-								{addReviewForm: _user$project$Types$emptyAddReviewForm, reviews: _krisajenkins$remotedata$RemoteData$Loading}),
+								{addReviewForm: _user$project$Luncher$emptyAddReviewForm, reviews: _krisajenkins$remotedata$RemoteData$Loading}),
 							_1: A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/reviews/', _user$project$Types$HandleReviewsResponse, _user$project$JsonConverter$decodeReviewsData)
 						};
 					case 'Failure':
@@ -9974,22 +10214,37 @@ var _user$project$Luncher$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							addPlaceForm: A2(_user$project$Luncher$updateAddPlaceForm, model.addPlaceForm, _p2._0)
+							addPlaceForm: A2(_user$project$Luncher$updateAddPlaceForm, model.addPlaceForm, _p5._0)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'AddPlace':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
 					_1: _user$project$Luncher$postNewPlace(model.addPlaceForm)
 				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							showReviewForm: _elm_lang$core$Maybe$Just(_p5._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
+var _user$project$Luncher$init = {
+	ctor: '_Tuple2',
+	_0: {places: _krisajenkins$remotedata$RemoteData$NotAsked, reviews: _krisajenkins$remotedata$RemoteData$NotAsked, addPlaceForm: _user$project$Luncher$emptyAddPlaceForm, addReviewForm: _user$project$Luncher$emptyAddReviewForm, showReviewForm: _elm_lang$core$Maybe$Nothing},
+	_1: _user$project$Luncher$getPlaces
+};
 var _user$project$Luncher$main = _elm_lang$html$Html$program(
 	{
-		init: _user$project$Types$init,
-		subscriptions: function (_p5) {
+		init: _user$project$Luncher$init,
+		subscriptions: function (_p8) {
 			return _elm_lang$core$Platform_Sub$none;
 		},
 		update: _user$project$Luncher$update,

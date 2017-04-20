@@ -1,8 +1,9 @@
 <!-- web/templates/page/index.html.eex -->
 <%= if @current_user do %>
-  <h2>Välkommen, <%= @current_user.name %>!</h2>
-  <img src="<%= @current_user.avatar %>" class="img-circle"/>
-  <%= link "Logout", to: auth_path(@conn, :delete), method: :delete, class: "btn btn-danger" %>
+  <div style="display: flex; justify-content: space-between;">
+    <h2>Lunchr</h2>
+    <div><%= link "Logout", to: auth_path(@conn, :delete), method: :delete, class: "btn btn-danger" %></div>
+  </div>
   <div id="elm-main"></div>
 <% else %>
   <%= link to: auth_path(@conn, :index, "google"), class: "btn btn-primary" do %>
