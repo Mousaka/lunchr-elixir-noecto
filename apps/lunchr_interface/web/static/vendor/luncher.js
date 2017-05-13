@@ -9741,6 +9741,17 @@ var _user$project$JsonConverter$decodePlacesData = A3(
 	_elm_lang$core$Json_Decode$list(_user$project$JsonConverter$decodePlace1),
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$PlacesData));
 
+var _user$project$Api$addPlace = function (place) {
+	return A4(
+		_ohanhi$remotedata_http$RemoteData_Http$post,
+		'/api/places/',
+		_user$project$Types$HandlePostPlace,
+		_user$project$JsonConverter$decodePlace,
+		_user$project$JsonConverter$encodeAddPlaceForm(place));
+};
+var _user$project$Api$places = A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/places/', _user$project$Types$HandlePlacesResponse, _user$project$JsonConverter$decodePlacesData);
+var _user$project$Api$reviews = A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/reviews/', _user$project$Types$HandleReviewsResponse, _user$project$JsonConverter$decodeReviewsData);
+
 var _user$project$Luncher$viewPlaces = F3(
 	function (webData, dataname, buttonAction) {
 		var _p0 = webData;
@@ -10111,15 +10122,6 @@ var _user$project$Luncher$updateAddPlaceForm = F2(
 				{cuisine: _p4._0});
 		}
 	});
-var _user$project$Luncher$postNewPlace = function (place) {
-	return A4(
-		_ohanhi$remotedata_http$RemoteData_Http$post,
-		'/api/places/',
-		_user$project$Types$HandlePostPlace,
-		_user$project$JsonConverter$decodePlace,
-		_user$project$JsonConverter$encodeAddPlaceForm(place));
-};
-var _user$project$Luncher$getPlaces = A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/places/', _user$project$Types$HandlePlacesResponse, _user$project$JsonConverter$decodePlacesData);
 var _user$project$Luncher$emptyAddPlaceForm = {name: '', cuisine: ''};
 var _user$project$Luncher$emptyAddReviewForm = {comment: '', place_id: '', rating: 5.1};
 var _user$project$Luncher$update = F2(
@@ -10150,7 +10152,7 @@ var _user$project$Luncher$update = F2(
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
 								{addPlaceForm: _user$project$Luncher$emptyAddPlaceForm, places: _krisajenkins$remotedata$RemoteData$Loading}),
-							_1: _user$project$Luncher$getPlaces
+							_1: _user$project$Api$places
 						};
 					case 'Failure':
 						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -10183,7 +10185,7 @@ var _user$project$Luncher$update = F2(
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
 								{addReviewForm: _user$project$Luncher$emptyAddReviewForm, reviews: _krisajenkins$remotedata$RemoteData$Loading}),
-							_1: A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/reviews/', _user$project$Types$HandleReviewsResponse, _user$project$JsonConverter$decodeReviewsData)
+							_1: _user$project$Api$reviews
 						};
 					case 'Failure':
 						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -10198,7 +10200,7 @@ var _user$project$Luncher$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{places: _krisajenkins$remotedata$RemoteData$Loading}),
-					_1: A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/places/', _user$project$Types$HandlePlacesResponse, _user$project$JsonConverter$decodePlacesData)
+					_1: _user$project$Api$places
 				};
 			case 'GetReviews':
 				return {
@@ -10206,7 +10208,7 @@ var _user$project$Luncher$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{reviews: _krisajenkins$remotedata$RemoteData$Loading}),
-					_1: A3(_ohanhi$remotedata_http$RemoteData_Http$get, '/api/reviews/', _user$project$Types$HandleReviewsResponse, _user$project$JsonConverter$decodeReviewsData)
+					_1: _user$project$Api$reviews
 				};
 			case 'AddPlaceFormUpdate':
 				return {
@@ -10222,7 +10224,7 @@ var _user$project$Luncher$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$Luncher$postNewPlace(model.addPlaceForm)
+					_1: _user$project$Api$addPlace(model.addPlaceForm)
 				};
 			default:
 				return {
@@ -10239,7 +10241,7 @@ var _user$project$Luncher$update = F2(
 var _user$project$Luncher$init = {
 	ctor: '_Tuple2',
 	_0: {places: _krisajenkins$remotedata$RemoteData$NotAsked, reviews: _krisajenkins$remotedata$RemoteData$NotAsked, addPlaceForm: _user$project$Luncher$emptyAddPlaceForm, addReviewForm: _user$project$Luncher$emptyAddReviewForm, showReviewForm: _elm_lang$core$Maybe$Nothing},
-	_1: _user$project$Luncher$getPlaces
+	_1: _user$project$Api$places
 };
 var _user$project$Luncher$main = _elm_lang$html$Html$program(
 	{

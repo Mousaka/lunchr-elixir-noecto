@@ -3,10 +3,9 @@ module Luncher exposing (..)
 import Html exposing (Html, h1, program, div, button, input)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (placeholder, value, class, style)
-import JsonConverter exposing (..)
 import RemoteData exposing (RemoteData(..), WebData, map)
-import RemoteData.Http
 import Types exposing (..)
+import Api exposing (..)
 
 
 main : Program Never Model Msg
@@ -22,7 +21,7 @@ init =
       , addReviewForm = emptyAddReviewForm
       , showReviewForm = Nothing
       }
-    , getPlaces
+    , Api.places
     )
 
 
@@ -47,7 +46,7 @@ update msg model =
         HandlePostPlace data ->
             case data of
                 Success _ ->
-                    ( { model | addPlaceForm = emptyAddPlaceForm, places = Loading }, getPlaces )
+                    ( { model | addPlaceForm = emptyAddPlaceForm, places = Loading }, Api.places )
 
                 Failure err ->
                     ( model, Cmd.none )
@@ -66,7 +65,7 @@ update msg model =
         HandlePostReview data ->
             case data of
                 Success _ ->
-                    ( { model | addReviewForm = emptyAddReviewForm, reviews = Loading }, RemoteData.Http.get "/api/reviews/" HandleReviewsResponse decodeReviewsData )
+                    ( { model | addReviewForm = emptyAddReviewForm, reviews = Loading }, Api.reviews )
 
                 Failure err ->
                     ( model, Cmd.none )
@@ -79,32 +78,22 @@ update msg model =
 
         GetPlaces ->
             ( { model | places = Loading }
-            , RemoteData.Http.get "/api/places/" HandlePlacesResponse decodePlacesData
+            , Api.places
             )
 
         GetReviews ->
             ( { model | reviews = Loading }
-            , RemoteData.Http.get "/api/reviews/" HandleReviewsResponse decodeReviewsData
+            , Api.reviews
             )
 
         AddPlaceFormUpdate addPlaceFormMsg ->
             ( { model | addPlaceForm = updateAddPlaceForm model.addPlaceForm addPlaceFormMsg }, Cmd.none )
 
         AddPlace ->
-            ( model, postNewPlace model.addPlaceForm )
+            ( model, addPlace model.addPlaceForm )
 
         ShowReviewForm placeId ->
             ( { model | showReviewForm = Just placeId }, Cmd.none )
-
-
-getPlaces : Cmd Msg
-getPlaces =
-    RemoteData.Http.get "/api/places/" HandlePlacesResponse decodePlacesData
-
-
-postNewPlace : AddPlaceForm -> Cmd Msg
-postNewPlace place =
-    RemoteData.Http.post "/api/places/" HandlePostPlace decodePlace (encodeAddPlaceForm place)
 
 
 updateAddPlaceForm : AddPlaceForm -> AddPlaceFormMsg -> AddPlaceForm
