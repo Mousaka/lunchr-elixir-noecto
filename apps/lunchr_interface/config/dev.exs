@@ -27,7 +27,7 @@ config :lunchr_interface, LunchrInterface.Endpoint,
   ]
 
 config :lunchr_interface, LunchrInterface.PageController,
-  mock_auth: true
+  mock_auth: false
 
 
 # Do not include metadata nor timestamps in development logs
