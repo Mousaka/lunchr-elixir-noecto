@@ -9,6 +9,7 @@ type alias Model =
     , addPlaceForm : AddPlaceForm
     , addReviewForm : AddReviewForm
     , showReviewForm : Maybe String
+    , reviewText : String
     }
 
 
@@ -70,6 +71,8 @@ type Msg
     | AddPlaceFormUpdate AddPlaceFormMsg
     | AddPlace
     | ShowReviewForm String
+    | CloseModal
+    | ReviewText String
 
 
 type AddPlaceFormMsg

@@ -1,11 +1,12 @@
 module Luncher exposing (..)
 
-import Html exposing (Html, h1, program, div, button, input)
+import Html exposing (Html, h1, program, div, button, input, text, p)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (placeholder, value, class, style)
 import RemoteData exposing (RemoteData(..), WebData, map)
 import Types exposing (..)
 import Api exposing (..)
+import Dialog exposing (..)
 
 
 main : Program Never Model Msg
@@ -20,6 +21,7 @@ init =
       , addPlaceForm = emptyAddPlaceForm
       , addReviewForm = emptyAddReviewForm
       , showReviewForm = Nothing
+      , reviewText = ""
       }
     , Api.places
     )
@@ -95,6 +97,12 @@ update msg model =
         ShowReviewForm placeId ->
             ( { model | showReviewForm = Just placeId }, Cmd.none )
 
+        CloseModal ->
+            ( { model | showReviewForm = Nothing }, Cmd.none )
+
+        ReviewText review ->
+            ( { model | reviewText = review }, Cmd.none )
+
 
 updateAddPlaceForm : AddPlaceForm -> AddPlaceFormMsg -> AddPlaceForm
 updateAddPlaceForm addPlaceForm msg =
@@ -138,6 +146,7 @@ viewPlace showRatingOnThisPlaceId place =
         , Html.h4 []
             [ Html.text ("Ingår kaffe: " ++ (boolToString place.coffee))
             , rating showRatingOnThisPlaceId place.id
+            , showPlaceMaybe showRatingOnThisPlaceId
             ]
         ]
 
@@ -150,20 +159,45 @@ rating showingPlace placeId =
         , Html.span [ class "glyphicon-plus" ] []
         , Html.span [ class "glyphicon-plus" ] []
         , Html.span [ class "glyphicon-plus" ] []
-        , div [] <| showPlaceMaybe showingPlace placeId
         ]
 
 
-showPlaceMaybe : Maybe String -> String -> List (Html Msg)
-showPlaceMaybe showingPlace placeId =
+
+-- showPlaceMaybe : Maybe String -> String -> List (Html Msg)
+
+
+showPlaceMaybe : Maybe String -> Html Msg
+showPlaceMaybe showingPlace =
     let
-        same id1 =
-            if id1 == placeId then
-                [ Html.input [ placeholder "Skriv recension" ] [] ]
-            else
-                []
+        a =
+            case showingPlace of
+                Just p ->
+                    Debug.log p
+
+                Nothing ->
+                    Debug.log "Ingenting"
     in
-        Maybe.withDefault [] (Maybe.map same showingPlace)
+        Dialog.view
+            (case showingPlace of
+                Just plId ->
+                    Just
+                        { closeMessage = Just CloseModal
+                        , containerClass = Just "your-container-class"
+                        , header = Just (text "Ranka")
+                        , body = Just (div [] [ Html.textarea [ style [ ( "resize", "none" ), ( "width", "100%" ) ], (placeholder "Skriv en recension"), onInput ReviewText ] [] ])
+                        , footer =
+                            Just
+                                (button
+                                    [ class "btn btn-success"
+                                    , onClick GetReviews
+                                    ]
+                                    [ text "OK" ]
+                                )
+                        }
+
+                Nothing ->
+                    Nothing
+            )
 
 
 boolToString : Maybe Bool -> String

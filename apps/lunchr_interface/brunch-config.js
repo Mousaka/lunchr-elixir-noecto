@@ -53,6 +53,7 @@ exports.config = {
   // Configure your plugins
   plugins: {
     elmBrunch: {
+      makeParameters : ['--debug'],
       elmFolder: "web/elm",
       mainModules: ["src/Luncher.elm"],
       outputFolder: "../static/vendor"
