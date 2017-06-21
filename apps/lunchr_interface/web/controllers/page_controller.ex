@@ -13,10 +13,8 @@ defmodule LunchrInterface.PageController do
 
   defp help(conn) do
     if mock_auth() do
-      IO.puts "Mock auth!"
       %{name: "Mockz0r", avatar: "", oauth_id: "mockid123"}
     else
-      IO.puts "Real auth!"
       get_session(conn, :current_user)
     end
   end
